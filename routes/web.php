@@ -18,10 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'expenses' => Expense::where('user_id', Auth::id())
                 ->latest()
                 ->take(10)
-                ->get()
+                ->get(),
         ]);
-    })->name('expenses');
-    Route::post('expenses', [ExpenseController::class, 'store'])->name('expenses');
+    })->name('expenses.index');
+    Route::post('expenses', [ExpenseController::class, 'store'])->name('expenses.store');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';
