@@ -2,6 +2,7 @@
 
 namespace App\Ai\Agents;
 
+use App\Models\Expense;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Date;
 use Laravel\Ai\Attributes\Provider;
@@ -16,7 +17,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider(Lab::Gemini)]
-class ExpenseParser implements Agent, Conversational, HasTools, HasStructuredOutput
+class ExpenseParser implements Agent, Conversational, HasStructuredOutput, HasTools
 {
     use Promptable;
 
@@ -26,7 +27,7 @@ class ExpenseParser implements Agent, Conversational, HasTools, HasStructuredOut
     public function instructions(): Stringable|string
     {
         return '你是一個專業記帳助理，負責從使用者提供的文字中提取消費金額、消費類別和描述。
-                目前的年份是' . Date::now()->year . '年。如果使用者沒說則預設今年';
+                目前的年份是'.Date::now()->year.'年。如果使用者沒說則預設今年';
     }
 
     /**
@@ -53,7 +54,7 @@ class ExpenseParser implements Agent, Conversational, HasTools, HasStructuredOut
     {
         return [
             'amount' => $schema->number()->description('消費金額'),
-            'category' => $schema->string()->enum(['飲食','交通','娛樂','生活','其他'])->description('消費類別'),
+            'category' => $schema->string()->enum(Expense::CATEGORIES)->description('消費類別'),
             'description' => $schema->string()->description('消費描述'),
             'confidence' => $schema->number()->description('解析信心度，範圍0-1'),
         ];

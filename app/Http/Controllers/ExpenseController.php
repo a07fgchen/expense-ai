@@ -2,31 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\ListRecentExpensesAction;
+use App\Actions\StoreExpenseFromMessage;
 use App\Ai\Agents\ExpenseParser;
-use App\Models\Expense;
+use App\Http\Requests\ExpenseRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExpenseController extends Controller
 {
-    //
-    public function store(Request $request, ExpenseParser $parser)
+    public function index(Request $request, ListRecentExpensesAction $listRecentExpensesAction): Response
     {
-        $request->validate([
-            'message' => 'required|string|max:255',
+        return Inertia::render('Expenses', [
+            'expenses' => $listRecentExpensesAction($request->user()),
         ]);
+    }
 
-        $result = $parser->prompt($request->input('message'));
+    public function store(
+        ExpenseRequest $request,
+        ExpenseParser $parser,
+        StoreExpenseFromMessage $storeExpenseFromMessage,
+    ): RedirectResponse {
+        $validated = $request->validated();
 
-        Expense::create([
-            'user_id' => Auth::id(),
-            'amount' => $result['amount'],
-            'category' => $result['category'],
-            'description' => $result['description'],
-            'ai_confidence' => $result['confidence'],
-            'ai_model' => 'gemini-3.1-flash',
-        ]);
+        $storeExpenseFromMessage($request->user(), $validated['message'], $parser);
 
-        return back()->with('success','紀錄成功!');
+        return back()->with('success', '紀錄成功!');
     }
 }
