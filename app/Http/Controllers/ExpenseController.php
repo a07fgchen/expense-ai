@@ -16,13 +16,13 @@ class ExpenseController extends Controller
             'message' => 'required|string|max:255',
         ]);
 
-        $result = $parser->predict($request->input('message'));
+        $result = $parser->prompt($request->input('message'));
 
-        $expense = Expense::create([
+        Expense::create([
             'user_id' => Auth::id(),
             'amount' => $result['amount'],
             'category' => $result['category'],
-            'description' => $result['decription'],
+            'description' => $result['description'],
             'ai_confidence' => $result['confidence'],
             'ai_model' => 'gemini-3.1-flash',
         ]);

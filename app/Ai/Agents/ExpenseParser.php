@@ -2,17 +2,21 @@
 
 namespace App\Ai\Agents;
 
-use Illuminate\JsonSchema\JsonSchema;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Date;
+use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
+use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Messages\Message;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-class ExpenseParser implements Agent, Conversational, HasTools
+#[Provider(Lab::Gemini)]
+class ExpenseParser implements Agent, Conversational, HasTools, HasStructuredOutput
 {
     use Promptable;
 
@@ -50,6 +54,7 @@ class ExpenseParser implements Agent, Conversational, HasTools
         return [
             'amount' => $schema->number()->description('消費金額'),
             'category' => $schema->string()->enum(['飲食','交通','娛樂','生活','其他'])->description('消費類別'),
+            'description' => $schema->string()->description('消費描述'),
             'confidence' => $schema->number()->description('解析信心度，範圍0-1'),
         ];
     }
