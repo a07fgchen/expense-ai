@@ -2,19 +2,19 @@
 import { Head } from '@inertiajs/vue3';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { dashboard } from '@/routes';
+import { index as expenseIndex } from '@/routes/expense';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
+        title: 'Expense AI',
+        href: expenseIndex(),
     },
 ];
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Expense AI" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div

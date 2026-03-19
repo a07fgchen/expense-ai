@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\ListRecentExpensesAction;
+use App\Actions\ListRecentExpenseAction;
 use App\Actions\StoreExpenseFromMessage;
 use App\Ai\Agents\ExpenseParser;
 use App\Http\Requests\ExpenseRequest;
@@ -13,9 +13,9 @@ use Inertia\Response;
 
 class ExpenseController extends Controller
 {
-    public function index(Request $request, ListRecentExpensesAction $listRecentExpensesAction): Response
+    public function index(Request $request, ListRecentExpenseAction $listRecentExpensesAction): Response
     {
-        return Inertia::render('Expenses', [
+        return Inertia::render('Expense', [
             'expenses' => $listRecentExpensesAction($request->user()),
         ]);
     }

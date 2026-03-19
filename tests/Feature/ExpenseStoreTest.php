@@ -17,7 +17,7 @@ test('已認證用戶可以從AI結構化輸出記錄消費', function () {
         ],
     ]);
 
-    $response = $this->actingAs($user)->post(route('expenses.store'), [
+    $response = $this->actingAs($user)->post(route('expense.store'), [
         'message' => '中午吃拉麵花了 250 元',
     ]);
 
@@ -39,7 +39,7 @@ test('已認證用戶可以從AI結構化輸出記錄消費', function () {
 });
 
 test('訪客嘗試記錄消費時會被重導到登入頁面', function () {
-    $response = $this->post(route('expenses.store'), [
+    $response = $this->post(route('expense.store'), [
         'message' => '晚餐便當 120 元',
     ]);
 
@@ -51,11 +51,11 @@ test('訪客嘗試記錄消費時會被重導到登入頁面', function () {
 test('expense message 是必填的', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->from(route('expenses.index'))->post(route('expenses.store'), [
+    $response = $this->actingAs($user)->from(route('expense.index'))->post(route('expense.store'), [
         'message' => '',
     ]);
 
-    $response->assertRedirect(route('expenses.index'));
+    $response->assertRedirect(route('expense.index'));
     $response->assertSessionHasErrors([
         'message' => '請輸入消費紀錄',
     ]);
@@ -75,11 +75,11 @@ test('當AI信心度超出有效範圍時無法生成紀錄', function () {
         ],
     ]);
 
-    $response = $this->actingAs($user)->from(route('expenses.index'))->post(route('expenses.store'), [
+    $response = $this->actingAs($user)->from(route('expense.index'))->post(route('expense.store'), [
         'message' => '中午吃拉麵花了 250 元',
     ]);
 
-    $response->assertRedirect(route('expenses.index'));
+    $response->assertRedirect(route('expense.index'));
     $response->assertSessionHasErrors([
         'message' => 'AI 無法穩定解析這筆消費，請換個方式描述。',
     ]);

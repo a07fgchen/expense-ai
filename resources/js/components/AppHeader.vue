@@ -36,8 +36,8 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import { index as expenseIndex } from '@/routes/expense';
 import type { BreadcrumbItem, NavItem } from '@/types';
-import expenses from '@/routes/expenses';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -57,7 +57,7 @@ const activeItemStyles =
 const mainNavItems: NavItem[] = [
     {
         title: '消費記錄',
-        href: expenses.index(),
+        href: expenseIndex(),
         icon: LayoutGrid,
     },
 ];

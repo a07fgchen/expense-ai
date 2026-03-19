@@ -15,12 +15,13 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as expenseIndex } from '@/routes/expense';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
+        title: 'Expense AI',
+        href: expenseIndex(),
         icon: LayoutGrid,
     },
 ];

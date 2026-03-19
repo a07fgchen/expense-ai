@@ -3,7 +3,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { index, store } from '@/routes/expenses';
+import { index, store } from '@/routes/expense';
 import type { BreadcrumbItem } from '@/types';
 
 type ExpenseItem = {
@@ -11,7 +11,7 @@ type ExpenseItem = {
     amount: number;
     category: string;
     description: string;
-    ai_confidence: number;
+    ai_confidence: number | null;
 };
 
 defineProps<{
@@ -20,7 +20,7 @@ defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Expenses',
+        title: 'Expense',
         href: index(),
     },
 ];
@@ -103,27 +103,29 @@ const getCategoryClass = (category: string): string => {
                     目前還沒有紀錄，先輸入一筆消費試試看。
                 </div>
 
-                <div
-                    v-for="expense in expenses"
-                    v-else
-                    :key="expense.id"
-                    class="flex items-center justify-between border-b py-3 last:border-b-0"
-                >
-                    <div class="min-w-0">
-                        <span
-                            class="mr-2 inline-flex rounded-md px-2 py-1 text-xs font-semibold"
-                            :class="getCategoryClass(expense.category)"
-                        >
-                            {{ expense.category }}
-                        </span>
-                        <span class="truncate align-middle">{{ expense.description }}</span>
-                    </div>
+                <div v-else>
+                    <div
+                        v-for="expense in expenses"
+                        :key="expense.id"
+                        class="flex items-center justify-between border-b py-3 last:border-b-0"
+                    >
+                        <div class="min-w-0">
+                            <span
+                                class="mr-2 inline-flex rounded-md px-2 py-1 text-xs font-semibold"
+                                :class="getCategoryClass(expense.category)"
+                            >
+                                {{ expense.category }}
+                            </span>
+                            <span class="truncate align-middle">{{ expense.description }}</span>
+                        </div>
 
-                    <div class="text-right">
-                        <p class="font-mono text-lg font-bold">${{ expense.amount }}</p>
-                        <p class="text-[10px] text-muted-foreground">
-                            AI 信心指數: {{ (expense.ai_confidence * 100).toFixed(0) }}%
-                        </p>
+                        <div class="text-right">
+                            <p class="font-mono text-lg font-bold">${{ expense.amount.toFixed(2) }}</p>
+                            <p class="text-[10px] text-muted-foreground">
+                                AI 信心指數:
+                                {{ expense.ai_confidence === null ? '--' : `${(expense.ai_confidence * 100).toFixed(0)}%` }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>

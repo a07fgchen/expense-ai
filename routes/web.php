@@ -10,8 +10,10 @@ Route::inertia('/', 'Welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-    Route::get('expenses', [ExpenseController::class, 'index'])->name('expenses.index');
-    Route::post('expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::group(['prefix' => 'expense', 'as' => 'expense.'], function () {
+        Route::get('/', [ExpenseController::class, 'index'])->name('index');
+        Route::post('/', [ExpenseController::class, 'store'])->name('store');
+    });
 });
 
 require __DIR__.'/settings.php';
