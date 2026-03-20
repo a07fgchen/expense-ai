@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -14,8 +14,21 @@ type ExpenseItem = {
     ai_confidence: number | null;
 };
 
+type Pagination<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    links: Array<{ url: string | null; label: string; active: boolean }>;
+};
+
 defineProps<{
-    expenses: ExpenseItem[];
+    expenses: Pagination<ExpenseItem>;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -99,13 +112,13 @@ const getCategoryClass = (category: string): string => {
             <section class="rounded-xl border bg-card p-5 text-card-foreground shadow-sm">
                 <h3 class="mb-4 text-base font-semibold">最近紀錄</h3>
 
-                <div v-if="expenses.length === 0" class="py-8 text-center text-sm text-muted-foreground">
+                <div v-if="expenses.data.length === 0" class="py-8 text-center text-sm text-muted-foreground">
                     目前還沒有紀錄，先輸入一筆消費試試看。
                 </div>
 
                 <div v-else>
                     <div
-                        v-for="expense in expenses"
+                        v-for="expense in expenses.data"
                         :key="expense.id"
                         class="flex items-center justify-between border-b py-3 last:border-b-0"
                     >
@@ -126,6 +139,35 @@ const getCategoryClass = (category: string): string => {
                                 {{ expense.ai_confidence === null ? '--' : `${(expense.ai_confidence * 100).toFixed(0)}%` }}
                             </p>
                         </div>
+                    </div>
+
+                    <div
+                        v-if="expenses.last_page > 1"
+                        class="mt-4 flex items-center justify-between text-sm"
+                    >
+                        <Link
+                            v-if="expenses.prev_page_url"
+                            :href="expenses.prev_page_url"
+                            preserve-scroll
+                            class="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                        >
+                            ← 上一頁
+                        </Link>
+                        <span v-else class="px-3 py-1.5 text-muted-foreground/40">← 上一頁</span>
+
+                        <span class="text-muted-foreground">
+                            第 {{ expenses.current_page }} / {{ expenses.last_page }} 頁（共 {{ expenses.total }} 筆）
+                        </span>
+
+                        <Link
+                            v-if="expenses.next_page_url"
+                            :href="expenses.next_page_url"
+                            preserve-scroll
+                            class="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                        >
+                            下一頁 →
+                        </Link>
+                        <span v-else class="px-3 py-1.5 text-muted-foreground/40">下一頁 →</span>
                     </div>
                 </div>
             </section>

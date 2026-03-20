@@ -4,22 +4,22 @@ namespace App\Actions;
 
 use App\Models\Expense;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListRecentExpenseAction
 {
     /**
-     * Get the most recent expenses for the given user.
+     * Get a paginated list of expenses for the given user, shaped as a DTO.
      *
-     * @return Collection<int, array{id:int,amount:float,category:string,description:string,ai_confidence:float|null}>
+     * @return LengthAwarePaginator<array{id:int,amount:float,category:string,description:string,ai_confidence:float|null}>
      */
-    public function __invoke(User $user, int $limit = 10): Collection
+    public function __invoke(User $user, int $perPage = 10): LengthAwarePaginator
     {
         return Expense::query()
             ->forUser($user)
-            ->recent($limit)
-            ->get(['id', 'amount', 'category', 'description', 'ai_confidence'])
-            ->map(fn (Expense $expense): array => [
+            ->latest()
+            ->paginate($perPage, ['id', 'amount', 'category', 'description', 'ai_confidence'])
+            ->through(fn (Expense $expense): array => [
                 'id' => $expense->id,
                 'amount' => (float) $expense->amount,
                 'category' => $expense->category,
