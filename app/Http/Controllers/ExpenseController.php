@@ -13,7 +13,7 @@ use Inertia\Response;
 
 class ExpenseController extends Controller
 {
-    public function index(ExpenseRequest $request, ListRecentExpenseAction $listRecentExpensesAction): Response
+    public function index(Request $request, ListRecentExpenseAction $listRecentExpensesAction): Response
     {
         return Inertia::render('Expense', [
             'expenses' => $listRecentExpensesAction($request->user()),
