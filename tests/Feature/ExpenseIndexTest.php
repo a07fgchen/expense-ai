@@ -32,8 +32,10 @@ test('expense index only returns current user records with whitelisted fields', 
 
     $response->assertInertia(fn (Assert $page) => $page
         ->component('Expense')
-        ->has('expenses', 1)
-        ->has('expenses.0', fn (Assert $expense) => $expense
+        ->where('expenses.current_page', 1)
+        ->where('expenses.total', 1)
+        ->has('expenses.data', 1)
+        ->has('expenses.data.0', fn (Assert $expense) => $expense
             ->where('id', $ownExpense->id)
             ->where('amount', 123.45)
             ->where('category', '飲食')
